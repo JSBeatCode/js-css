@@ -1,0 +1,8 @@
+모바일 뷰
+svg 이미지로 대체
+section 안의 scroll animation 완료되면 다음 section으로 scrollTo
+section 안의 scroll animation 완료되면 다음 section으로 scroll 가능
+    > 삼각형
+    > 이미지
+    > sunrise
+    > 문구

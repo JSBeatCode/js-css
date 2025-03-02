@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sun and Moon Centered</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 300vh; /* 페이지 길이를 더 길게 설정하여 스크롤이 가능하게 함 */
+      font-family: Arial, sans-serif;
+    }
+
+    /* 네비게이션 바 스타일 */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #333;
+      padding: 10px;
+      z-index: 100;
+    }
+
+    nav a {
+      color: white;
+      padding: 10px 15px;
+      text-decoration: none;
+      text-transform: uppercase;
+      font-size: 16px;
+      margin: 0 10px;
+    }
+
+    nav a.active {
+      background-color: #f39c12; /* 활성화된 메뉴 항목 배경색 */
+    }
+
+    /* 첫 번째 section: 하늘색 배경 */
+    #section1 {
+      display: flex;
+      justify-content: center; /* 수평 중앙 정렬 */
+      align-items: center; /* 수직 중앙 정렬 */
+      height: 50%; /* 화면 높이의 100% */
+      background-color: #87CEFA; /* 하늘색 배경 */
+    }
+
+    /* 두 번째 section2: 어두운 밤하늘 색 */
+    #section2 {
+      display: flex;
+      justify-content: center; /* 수평 중앙 정렬 */
+      align-items: center; /* 수직 중앙 정렬 */
+      height: 50%; /* 화면 높이의 100% */
+      background-color: #2C3E50; /* 어두운 밤하늘 색 */
+    }
+
+    /* 태양 모양의 div 스타일 */
+    .sun {
+      width: 10vw;  /* 화면 너비의 10% */
+      height: 10vw; /* 화면 너비의 10% */
+      background-color: yellow;
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(255, 255, 0, 0.7);
+    }
+
+    /* 달 모양의 div 스타일 */
+    .moon {
+      width: 10vw;  /* 화면 너비의 10% */
+      height: 10vw; /* 화면 너비의 10% */
+      background-color: #C0C0C0;
+      border-radius: 50%;
+      position: relative;
+      box-shadow: 0 0 20px rgba(192, 192, 192, 0.7);
+    }
+
+    /* 반응형 조정 */
+    @media (max-width: 768px) {
+      .sun, .moon {
+        width: 25vw; /* 화면 너비의 25% */
+        height: 25vw; /* 화면 너비의 25% */
+      }
+    }
+
+    @media (max-width: 480px) {
+      .sun, .moon {
+        width: 35vw; /* 화면 너비의 35% */
+        height: 35vw; /* 화면 너비의 35% */
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 네비게이션 바 -->
+  <nav>
+    <a href="#section1" id="nav-section1">Section 1</a>
+    <a href="#section2" id="nav-section2">Section 2</a>
+  </nav>
+
+  <!-- 첫 번째 section: 태양, 하늘색 배경 -->
+  <section id="section1">
+    <div class="sun"></div>
+  </section>
+
+  <!-- 두 번째 section2: 달, 밤하늘 색 배경 -->
+  <section id="section2">
+    <div class="moon"></div>
+  </section>
+
+  <script>
+    // 네비게이션 활성화 및 스크롤 위치 추적
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('nav a');
+
+    // Intersection Observer 설정
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.5 // 섹션이 화면의 50% 이상 보이면 활성화
+    };
+
+    const observerCallback = (entries) => {
+      entries.forEach(entry => {
+        const id = entry.target.id;
+        const link = document.querySelector(`nav a[href="#${id}"]`);
+        
+        if (entry.isIntersecting) {
+          // 섹션이 화면에 보이면 해당 메뉴 링크에 'active' 클래스 추가
+          link.classList.add('active');
+        } else {
+          // 섹션이 화면에 보이지 않으면 해당 메뉴 링크에서 'active' 클래스 제거
+          link.classList.remove('active');
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    sections.forEach(section => {
+      observer.observe(section); // 각 섹션을 관찰
+    });
+
+    // 스크롤 시 섹션으로 부드럽게 이동
+    document.querySelectorAll('nav a').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault(); // 기본 동작을 막고
+        const targetId = this.getAttribute('href').substring(1);
+        const targetSection = document.getElementById(targetId);
+        
+        // 해당 섹션으로 부드럽게 스크롤
+        targetSection.scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!-- 과제 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" 
+    content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            
+            height: 3000px;
+            background: #f1f1f1;
+        }
+
+        #div1 {
+            
+            height:50%;
+            border:5px solid red
+        }
+        #div2 {
+            
+            top: 50%;
+            height:50%;
+            border:5px solid green
+        }
+
+        #mySVG{
+            position: absolute;
+            top: 15%;
+            width: 400px;
+            height: 210px;
+            margin-left: -50px;
+        }
+    </style>
+</head>
+<body>
+    
+    <h2>Scroll down to draw triangle</h2>
+    <p>Scroll back to reverse drawing</p>
+    <div id="div1">
+
+    </div>
+    <div id="div2">
+        <svg id="mySVG">
+            <path fill="none" stroke="red" stroke-width="3" 
+            id="triangle" 
+            d="M150 0 L75 200 L225 200 Z"></path>
+            Not support SVG
+        </svg>
+    </div>
+
+    <script>
+       var triangle = document.getElementById("triangle");
+       // console.log('debug1', triangle);
+       var length = triangle.getTotalLength();
+       // console.log('debug2', length);
+       
+       triangle.style.strokeDasharray = length;
+       triangle.style.strokeDashoffset = length;
+
+       window.addEventListener("scroll", myFunction);
+
+       function myFunction() {
+            var scrollpercent = (document.body.scrollTop // 이것은 항상 0
+                                + document.documentElement.scrollTop // 이것은 현재 스크롤 위치
+                                ) 
+                                    / 
+                                (document.documentElement.scrollHeight // 문서의 **전체 높이**를 반환합니다.
+                                - document.documentElement.clientHeight // 화면에 보이는 영역(뷰포트)의 높이를 반환합니다.
+                                )
+            console.log('scrollpercent', scrollpercent);
+            console.log('document.body.scrollTop', document.body.scrollTop);
+            console.log('document.documentElement.scrollTop', document.documentElement.scrollTop);
+            console.log('document.documentElement.scrollHeight', document.documentElement.scrollHeight);
+            console.log('document.documentElement.clientHeight', document.documentElement.clientHeight);
+
+            var draw = length * scrollpercent
+
+            console.log('debug 3', draw);
+
+            triangle.style.strokeDashoffset = length - draw;
+       }
+
+    </script>
+</body>
+</html>

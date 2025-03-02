@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>텍스트 캐러셀</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+        }
+
+        .carousel-container {
+            position: relative;
+            width: 300px;
+            height: 100px;
+            overflow: hidden; /*이것을 주석처리하면 어떻게 돌아가는지 보임*/
+            border: 1px solid red;
+        }
+
+        .carousel-wrapper {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            border: 1px solid green;
+        }
+
+        .carousel-text {
+            min-width: 100%;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .buttons {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+        }
+
+        button {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Pagination bullets */
+        .pagination {
+            position: absolute;
+            bottom: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .bullet {
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .bullet.active {
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="carousel-container">
+        <div class="carousel-wrapper">
+            <div class="carousel-text">Slide 1</div>
+            <div class="carousel-text">Slide 2</div>
+            <div class="carousel-text">Slide 3</div>
+        </div>
+        <div class="buttons">
+            <button id="prevButton">Prev</button>
+            <button id="nextButton">Next</button>
+        </div>
+        <div class="pagination">
+            <div class="bullet active" data-index="0"></div>
+            <div class="bullet" data-index="1"></div>
+            <div class="bullet" data-index="2"></div>
+        </div>
+    </div>
+
+    <script>
+        const wrapper = document.querySelector('.carousel-wrapper');
+        const texts = document.querySelectorAll('.carousel-text');
+        const bullets = document.querySelectorAll('.bullet');
+        let index = 0;
+
+        document.getElementById('prevButton').addEventListener('click', () => {
+            index = (index === 0) ? texts.length - 1 : index - 1;
+            updateCarousel();
+        });
+
+        document.getElementById('nextButton').addEventListener('click', () => {
+            index = (index === texts.length - 1) ? 0 : index + 1;
+            updateCarousel();
+        });
+
+        bullets.forEach(bullet => {
+            bullet.addEventListener('click', (e) => {
+                index = parseInt(e.target.getAttribute('data-index'));
+                updateCarousel();
+            });
+        });
+
+        function updateCarousel() {
+            wrapper.style.transform = `translateX(-${index * 100}%)`;
+            updatePagination();
+        }
+
+        function updatePagination() {
+            bullets.forEach(bullet => bullet.classList.remove('active'));
+            bullets[index].classList.add('active');
+        }
+        
+        setInterval(() => {
+            index = (index === texts.length - 1) ? 0 : index + 1;
+            updateCarousel();
+        }, 3000)
+    </script>
+
+</body>
+</html>

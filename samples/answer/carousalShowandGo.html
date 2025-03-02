@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carousel</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        .carousel-container {
+            width: 80%;
+            height: 300px;
+            margin: auto;
+            position: relative;
+            background: linear-gradient(135deg, #ff7eb3, #ff758c);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .carousel-text {
+            font-size: 24px;
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            position: absolute;
+            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+        }
+        .hidden {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        .visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 10;
+        }
+        .prev { left: 10px; }
+        .next { right: 10px; }
+        
+        /* Pagination bullets */
+        .pagination {
+            position: absolute;
+            bottom: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .bullet {
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .bullet.active {
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="carousel-container">
+        <button class="prev">&#10094;</button>
+        <div class="carousel-text visible">Slide 1</div>
+        <button class="next">&#10095;</button>
+        <div class="pagination">
+            <div class="bullet active" data-index="0"></div>
+            <div class="bullet" data-index="1"></div>
+            <div class="bullet" data-index="2"></div>
+        </div>
+    </div>
+
+    <script>
+        const textElement = document.querySelector(".carousel-text");
+        const prevButton = document.querySelector(".prev");
+        const nextButton = document.querySelector(".next");
+        const bullets = document.querySelectorAll('.bullet');
+
+        const texts = ["Slide 1", "Slide 2", "Slide 3"];
+        let index = 0;
+
+        function updateText(direction, bulletIdx) {
+            textElement.classList.remove("visible");
+            textElement.classList.add("hidden");
+
+            setTimeout(() => {
+                if (bulletIdx) {
+                    index = bulletIdx;
+                } else {
+                    index = (index + direction + texts.length) % texts.length;
+                }
+                textElement.textContent = texts[index];
+                textElement.classList.remove("hidden");
+                textElement.classList.add("visible");
+                updatePagination();
+            }, 500);
+        }
+
+        nextButton.addEventListener("click", () => updateText(1));
+        prevButton.addEventListener("click", () => updateText(-1));
+        
+        bullets.forEach(bullet => {
+            bullet.addEventListener('click', (e) => {
+                index = parseInt(e.target.getAttribute('data-index'));
+                updateText(direction, index)
+            });
+        });
+
+        /*
+        function updateCarousel() {
+            wrapper.style.transform = `translateX(-${index * 100}%)`;
+            updatePagination();
+        }
+        */
+
+        function updatePagination() {
+            bullets.forEach(bullet => bullet.classList.remove('active'));
+            bullets[index].classList.add('active');
+        }
+    </script>
+</body>
+</html>

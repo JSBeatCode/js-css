@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scroll SVG Movement</title>
+    <style>
+        /* body 스타일 설정 */
+        body {
+            margin: 0;
+            /* 기본 margin 제거 */
+            height: 400vh;
+            /* 문서의 높이를 2배로 설정하여 스크롤 가능하게 함 */
+            /* display: flex; /* 컨테이너를 화면 중앙에 정렬하기 위해 flex 사용 */
+            /* justify-content: center; /* 가로 방향으로 중앙 정렬 */
+            /* align-items: center; /* 세로 방향으로 중앙 정렬 */
+        }
+
+        /* SVG를 감싸는 컨테이너 스타일 */
+        .container {
+            position: relative;
+            /* 내부 요소의 절대 위치를 기준으로 설정 */
+            width: 300px;
+            /* 컨테이너의 너비 */
+            height: 300px;
+            /* 컨테이너의 높이 */
+            background-color: #f4f4f4;
+            /* 연한 회색 배경 */
+            border: 1px solid #ccc;
+            /* 테두리 설정 */
+            overflow: hidden;
+            /* SVG가 컨테이너를 넘어가는 것을 숨김 */
+        }
+
+        /* SVG 아이콘의 스타일 */
+        #arrowSVG {
+            position: absolute;
+            /* 컨테이너를 기준으로 위치를 설정 */
+            top: 50%;
+            /* 초기 위치를 컨테이너의 상단으로 설정 */
+            left: 50%;
+            /* 수평으로 중앙 정렬 */
+            transform: translate(-50%, 0);
+            /* 정확히 중앙에 배치 (X축 -50%) */
+            transition: transform 0.1s ease-out;
+            /* 움직임을 부드럽게 만듦 */
+        }
+
+        #mySVG {
+            
+            position: absolute; /* 스크롤 시 위치 고정 */
+            top: 15%; /* 화면 상단에서 15% 아래에 위치 */
+            width: 400px; /* SVG의 너비 설정 */
+            height: 210px; /* SVG의 높이 설정 */
+            margin-left: -50px; /* 좌측으로 약간 이동 */
+        }
+
+        .section1 {
+            border: 5px solid blue;
+            height: 25%;
+            width: 100%;
+            display: flex;
+            /* 컨테이너를 화면 중앙에 정렬하기 위해 flex 사용 */
+            justify-content: center;
+            /* 가로 방향으로 중앙 정렬 */
+            align-items: center;
+            /* 세로 방향으로 중앙 정렬 */
+            position: relative;
+            /* 내부 요소의 절대 위치를 기준으로 설정 */
+            /* overflow: hidden;*/
+            /* SVG가 컨테이너를 넘어가는 것을 숨김 */
+        }
+
+        .section2 {
+            border: 5px solid green;
+            height: 25%;
+            width: 100%;
+            display: flex;
+            /* 컨테이너를 화면 중앙에 정렬하기 위해 flex 사용 */
+            justify-content: center;
+            /* 가로 방향으로 중앙 정렬 */
+            align-items: center;
+            /* 세로 방향으로 중앙 정렬 */
+            position: relative;
+            /* 내부 요소의 절대 위치를 기준으로 설정 */
+            /* overflow: hidden;*/
+            /* SVG가 컨테이너를 넘어가는 것을 숨김 */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="section1">
+        <svg id="arrowSVG" xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" viewBox="0 0 16 16"> -->
+            <path d="M8 1.5a.5.5 0 0 1 .5.5v11a.5.5 0 0 1-1 0v-11a.5.5 0 0 1 .5-.5z" />
+            <path
+                d="M6.354 4.854a.5.5 0 1 1-.708-.708L8.293 2.5a.5.5 0 0 1 .707 0l2.647 2.646a.5.5 0 0 1-.707.708L8 3.207l-1.646 1.647z" />
+        </svg>
+    </div>
+    <div class="section2">
+        <!-- SVG 그래픽 정의 -->
+        <svg id="mySVG">
+            <!-- 빨간색 삼각형을 그리는 경로 정의 -->
+            <path fill="none" stroke="red" stroke-width="3" id="triangle" 
+            d="M150 0 L75 200 L225 200 Z" />
+            <!-- 브라우저가 SVG를 지원하지 않는 경우 표시할 메시지 -->
+            Sorry, your browser does not support inline SVG.
+        </svg>
+    </div>
+    <!-- SVG를 담고 있는 컨테이너 -->
+    <!-- <div class="container"> -->
+    <!-- SVG 아이콘 -->
+    <!-- <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" viewBox="0 0 16 16"> -->
+    <!-- SVG 내부 아이콘 -->
+    <!-- <path d="M8 1.5a.5.5 0 0 1 .5.5v11a.5.5 0 0 1-1 0v-11a.5.5 0 0 1 .5-.5z"/> -->
+    <!-- <path d="M6.354 4.854a.5.5 0 1 1-.708-.708L8.293 2.5a.5.5 0 0 1 .707 0l2.647 2.646a.5.5 0 0 1-.707.708L8 3.207l-1.646 1.647z"/> -->
+    <!-- </svg> -->
+    <!-- </div> -->
+
+    <script>
+
+        // JavaScript로 스크롤에 따라 SVG의 위치를 조정
+
+        // 1. 필요한 요소 가져오기
+        const svgElement = document.querySelector("svg"); // SVG 요소 선택
+        // const container = document.querySelector(".container"); // 컨테이너 요소 선택
+        const section1 = document.querySelector(".section1"); // 컨테이너 요소 선택
+
+
+        // 2. 컨테이너와 SVG의 크기 계산
+        const section1Height = section1.offsetHeight; // 컨테이너 높이 가져오기. container 요소의 **높이(Height)**를 픽셀 단위로 가져옵니다.
+        const svgHeight = svgElement.getBoundingClientRect().height; // SVG 높이 가져오기. svgElement 요소의 뷰포트 내의 높이를 픽셀 단위로 가져옵니다.
+
+        // 3. 스크롤 이벤트 처리
+        window.addEventListener("scroll", () => {
+            /*f
+            1. window.scrollY
+              의미: 현재 문서의 세로 스크롤 위치.
+              문서의 상단부터 현재 뷰포트의 시작 위치까지의 픽셀 값을 반환합니다.
+              값 범위: 0부터 시작하며, 문서가 길 경우 최대 값은 document.body.scrollHeight - window.innerHeight입니다.
+              브라우저에서 스크롤이 움직일 때마다 이 값이 업데이트됩니다.
+            2. document.body.scrollHeight
+              의미: 문서 전체의 높이.
+              문서의 스크롤 가능한 전체 높이를 픽셀 단위로 반환합니다.
+              포함 요소:
+              문서의 모든 콘텐츠(스크롤 가능한 부분 포함).
+              콘텐츠가 overflow로 숨겨지지 않았다면 문서의 실제 높이를 나타냅니다.
+              예시:
+              문서가 길다면, 브라우저 창 높이를 초과하는 모든 부분도 포함합니다.
+            3. window.innerHeight
+              의미: 브라우저 창(뷰포트)의 현재 높이.
+              브라우저 창에서 콘텐츠가 표시되는 영역의 높이(픽셀 단위)를 반환합니다.
+              스크롤바, 도구 모음 등의 요소는 포함되지 않습니다.
+              이 값은 창의 크기를 조정할 때마다 변경될 수 있습니다.
+            */
+            // 전체 문서에서 현재 스크롤 위치를 0 ~ 1 사이의 비율로 계산
+            // const section1 = document.getElementsByClassName("section1")
+            // const section1 = document.querySelector(".section1")
+            // const scrollHeight = section1.offsetHeight;
+            // const scrollY = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+            // const scrollY = window.scrollY / (section1Height - window.innerHeight);
+            const scrollY = window.scrollY / (section1Height);
+
+             console.log('window.scrollY ', window.scrollY);
+             console.log('window.innerHeight ', window.innerHeight);
+             console.log('section1Height ', section1Height);
+             console.log('scrollY ', scrollY);
+             /*
+             const svgArrow = document.querySelector('#arrowSVG')
+             console.log('svgArrow  ', svgArrow);
+             const svgHeight = svgArrow.offsetHeight
+             console.log('svgHeight  ', svgHeight);
+            */
+            console.log('translateY ', (section1Height - svgHeight) * scrollY);
+            if (scrollY <= 0.45) {
+                
+                // SVG가 이동할 수 있는 최대 거리 계산 (컨테이너 높이 - SVG 높이)
+                const maxTranslateY = section1Height - svgHeight;
+    
+                // 스크롤 비율에 따라 SVG의 Y축 이동 값 계산
+                const translateY = maxTranslateY * scrollY;
+                console.log('translateY ', translateY);
+                // 계산된 값을 CSS transform 속성에 적용
+                if (translateY <= (section1Height / 2.5)) {
+                    svgElement.style.transform = `translate(-50%, ${translateY}px)`;
+                }
+
+            } else {
+                svgElement.style.transform = `translate(-50%, ${(section1Height / 2.5)}px)`;
+            }
+        });
+        window.addEventListener('load', () => {
+            console.log('page load completed!');
+        })
+    </script>
+</body>
+
+</html>

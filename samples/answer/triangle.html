@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* 기본적인 페이지 스타일 설정 */
+body {
+  height: 2000px; /* 스크롤이 가능하도록 페이지 높이를 크게 설정 */
+  background: #f1f1f1; /* 페이지 배경 색상을 연한 회색으로 설정 */
+}
+
+/* SVG 요소의 스타일 설정 */
+#mySVG {
+  position: fixed; /* 스크롤 시 위치 고정 */
+  top: 15%; /* 화면 상단에서 15% 아래에 위치 */
+  width: 400px; /* SVG의 너비 설정 */
+  height: 210px; /* SVG의 높이 설정 */
+  margin-left: -50px; /* 좌측으로 약간 이동 */
+}
+</style>
+</head>
+<body>
+
+<!-- 페이지 내용 -->
+<h2>Scroll down this window to draw a triangle.</h2>
+<p>Scroll back up to reverse the drawing.</p>
+
+<!-- SVG 그래픽 정의 -->
+<svg id="mySVG">
+  <!-- 빨간색 삼각형을 그리는 경로 정의 -->
+  <path fill="none" stroke="red" stroke-width="3" id="triangle" 
+  d="M150 0 L75 200 L225 200 Z" />
+  <!-- 브라우저가 SVG를 지원하지 않는 경우 표시할 메시지 -->
+  Sorry, your browser does not support inline SVG.
+</svg>
+
+<script>
+// <path> 요소와 해당 길이 가져오기
+var triangle = document.getElementById("triangle"); // 삼각형 경로를 나타내는 <path> 요소 가져오기
+var length = triangle.getTotalLength(); // 경로의 총 길이 계산
+
+// 경로 시작 위치 설정 (삼각형을 그리기 위한 초기 상태)
+triangle.style.strokeDasharray = length; 
+// strokeDasharray: 선을 대시(점선)로 정의하며, 전체 경로 길이를 설정해 완전히 대시 상태로 만듦
+
+// 경로를 숨김 (스크롤하기 전까지 삼각형이 보이지 않게 설정)
+triangle.style.strokeDashoffset = length; 
+// strokeDashoffset: 대시의 시작 지점을 경로의 전체 길이만큼 오프셋 설정해 완전히 숨김
+
+// 스크롤 이벤트 시 호출되는 함수 등록
+window.addEventListener("scroll", myFunction);
+
+function myFunction() {
+  // 현재 스크롤 위치의 비율 계산
+  var scrollpercent = (document.body.scrollTop 
+                      + document.documentElement.scrollTop) / 
+                      (document.documentElement.scrollHeight 
+                      - document.documentElement.clientHeight);
+  // scrollTop: 스크롤된 픽셀 수
+  // scrollHeight: 페이지의 전체 높이
+  // clientHeight: 뷰포트(현재 보이는 영역)의 높이
+  // scrollpercent: 현재 스크롤이 전체 페이지에서 차지하는 비율 (0~1)
+  // 즉, ( 스크롤 된 높이 / (페이제 전체 높이 - 현재 보여지는 웹페이지 높이))
+   
+  var draw = length * scrollpercent; // 스크롤 비율에 따라 경로의 그려질 길이 계산
+
+  // 삼각형의 그려질 부분을 동적으로 설정 (스크롤 방향에 따라 업데이트)
+  triangle.style.strokeDashoffset = length - draw; 
+  // strokeDashoffset 값을 줄여나감으로써 삼각형이 그려지도록 함
+}
+</script>
+
+</body>
+</html>

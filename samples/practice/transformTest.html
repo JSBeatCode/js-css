@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transform 속성 예제</title>
+  <style>
+    .box {
+      width: 100px;
+      height: 100px;
+      background-color: #3498db;
+      margin: 50px;
+      transition: transform 0.5s ease;
+    }
+    .translate {
+      transform: translate(50px, 50px);
+    }
+    .rotate {
+      transform: rotate(45deg);
+    }
+    .scale {
+      transform: scale(1.5);
+    }
+    .skew {
+      transform: skew(30deg, 10deg);
+    }
+    .combined {
+      transform: translate(50px, 50px) rotate(45deg) scale(1.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="box translate"></div>
+  <div class="box rotate"></div>
+  <div class="box scale"></div>
+  <div class="box skew"></div>
+  <div class="box combined"></div>
+</body>
+</html>

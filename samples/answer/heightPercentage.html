@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Position Percentage</title>
+  <style>
+    .container {
+      position: relative; /* 자식 요소 중 position이 absolute, fixed인 요소의 기준점을 설정 */
+      height: 400px;      /* 컨테이너의 높이를 400px로 설정 */
+      border: 1px solid #000; /* 컨테이너에 검은색 1px 두께의 실선 테두리를 설정 */
+      overflow: hidden;   /* 자식 요소가 컨테이너 범위를 벗어나는 경우 숨김 처리 */
+    }
+    
+    .target {
+      position: absolute; /* 컨테이너 (.container)를 기준으로 위치를 절대적으로 설정 */
+      top: 150px;         /* 컨테이너의 상단에서 150px 아래로 위치 */
+      left: 50%;          /* 컨테이너의 왼쪽에서 50% (가로 중앙) 위치 */
+      transform: translateX(-50%); /* 요소를 자신의 가로 길이의 절반만큼 왼쪽으로 이동해 정확히 중앙 정렬 */
+      width: 50px;        /* 요소의 너비를 50px로 설정 */
+      height: 50px;       /* 요소의 높이를 50px로 설정 */
+      background: red;    /* 요소의 배경색을 빨간색으로 설정 */
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="target"></div>
+  </div>
+
+  <script>
+    // 부모 요소와 자식 요소 선택
+    const container = document.querySelector('.container');
+    const target = document.querySelector('.target');
+
+    // 부모 요소와 자식 요소의 위치 및 크기 정보 가져오기
+    const containerRect = container.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    console.log(containerRect);
+    console.log(targetRect);
+    // 1. 자식 요소의 중심점 Y 좌표 계산
+    // targetRect.top: 자식 요소의 상단이 화면 기준으로 얼마나 떨어져 있는지.
+    // targetRect.height: 자식 요소의 전체 높이.
+    // targetRect.height / 2: 자식 요소의 높이의 절반 (중심점까지의 거리).
+    const targetCenterY = targetRect.top + targetRect.height / 2;
+    console.log(targetCenterY);
+
+    // 2. 부모 요소 내에서 자식 요소의 Y 좌표 비율 계산
+    // containerRect.top: 부모 요소의 상단이 화면 기준으로 얼마나 떨어져 있는지.
+    // (targetCenterY - containerRect.top): 자식 요소의 중심점이 부모 요소 상단 기준으로 얼마나 떨어져 있는지.
+    // containerRect.height: 부모 요소의 높이.
+    // (targetCenterY - containerRect.top) / containerRect.height: 
+    // 자식 요소 중심점이 부모 요소 높이의 몇 %에 해당하는지 비율 계산.
+    const relativePositionY = (targetCenterY - containerRect.top) / containerRect.height;
+    console.log(relativePositionY);
+
+    // 퍼센트로 변환
+    const percentage = (relativePositionY * 100).toFixed(2);
+
+    // 결과 출력
+    console.log(`자식 요소는 부모 요소 높이의 ${percentage}% 위치에 있습니다.`);
+  </script>
+</body>
+</html>
