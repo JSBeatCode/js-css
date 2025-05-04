@@ -1,7 +1,7 @@
 <template>
     <div class="HPcontainer"
         id="HPcontainerId">
-        <div class="target"></div>
+        <div class="HPtarget">1234</div>
     </div>
 </template>
 
@@ -12,11 +12,11 @@ import { onMounted } from 'vue';
         const container = document.querySelector('.container')
         const containerEC = document.getElementsByClassName('HPcontainer')
         const containerEI = document.getElementById('HPcontainerId')
-        const target = document.querySelector('.target')
+        const HPtarget = document.querySelector('.HPtarget')
 
         const containerRect = container.getBoundingClientRect()
-        const targetRect = target.getBoundingClientRect()
-        console.log('containerEC', containerEC);
+        const targetRect = HPtarget.getBoundingClientRect()
+        console.log('containerEC', containercontainerEC);
         console.log('containerEI', containerEI);
 
         console.log(containerRect);
@@ -34,16 +34,16 @@ import { onMounted } from 'vue';
     })
 </script>
 
-<style lang="scss" scoped>
+<style>
 .HPcontainer {
     position: absolute;
     height: 400px;
     width: 100%;
     border: 1px solid #000;
     overflow: hidden;
-    border: 1px solid blue
+    border: 1px solid green
 }
-.target {
+.HPtarget {
     position: absolute;
     top: 150px;
     left: 50%;

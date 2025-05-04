@@ -3,8 +3,6 @@
     <!-- <div style="height: 50%;"> -->
     <ScrollFollow />
     <ScrollFollow2 />
-    <!-- <HeightPercentage /> -->
-    <Circle />
     <!-- </div> -->
     <!-- <div style="height: 50%;">
       <HeightPercentage />
@@ -17,8 +15,6 @@ import ScrollFollow from './components/ScrollFollow.vue'
 import ScrollFollow2 from './components/ScrollFollow2.vue'
 // import HelloWorld from './components/HelloWorld.vue'
 // import HeightPercentage from './components/HeightPercentage.vue'
-// import Triangle from './components/Triangle.vue'
-import Circle from './components/Circle.vue'
 
 import { onMounted, reactive } from 'vue'
 
@@ -46,35 +42,6 @@ const state = reactive({
 // created
 onMounted(() => {
 
-  const circle = document.querySelector("circle");
-  const totalLength = 2 * Math.PI * 100; // r = 100
-
-    window.addEventListener("scroll", () => {
-        const scrollTop = window.scrollY;
-        const scrollHeight = document.body.scrollHeight - window.innerHeight;
-
-        const scrollProgress = scrollTop / scrollHeight;
-
-        // 0 (처음) → 628 (끝까지 그려짐)
-        const offset = totalLength * (1 - scrollProgress);
-        circle.style.strokeDashoffset = offset;
-    });
-
-  // scroll arraow start
-  getElementsPosition();
-  // 3. 스크롤 이벤트 처리
-  window.addEventListener("scroll", () => {
-    onScrollEvent();
-  });
-  window.addEventListener('resize', () => {
-    // 여기에서 원하는 함수를 호출하면 됩니다
-    getElementsPosition();
-    onScrollEvent();
-  });
-})
-
-function getElementsPosition() {
-
   // JavaScript로 스크롤에 따라 SVG의 위치를 조정
   // 1. 필요한 요소 가져오기
   state.section1.svgElement = document.querySelector("#arrowSVG1"); // SVG 요소 선택
@@ -83,21 +50,25 @@ function getElementsPosition() {
   state.section2.svgElement = document.querySelector("#arrowSVG2"); // SVG 요소 선택
   state.section2.sectionBox = document.querySelector(".section2"); // 컨테이너 요소 선택
   // 2. 컨테이너와 SVG의 크기 계산
-  state.section1.top = state.section1.sectionBox.getBoundingClientRect().top + window.scrollY; // 컨테이너 높이 가져오기. SFcontainer 요소의 **높이(Height)**를 픽셀 단위로 가져옵니다.
-  state.section1.bottom = state.section1.sectionBox.getBoundingClientRect().bottom + window.scrollY; // 컨테이너 높이 가져오기. SFcontainer 요소의 **높이(Height)**를 픽셀 단위로 가져옵니다.
+  state.section1.top = state.section1.sectionBox.getBoundingClientRect().top; // 컨테이너 높이 가져오기. SFcontainer 요소의 **높이(Height)**를 픽셀 단위로 가져옵니다.
+  state.section1.bottom = state.section1.sectionBox.getBoundingClientRect().bottom; // 컨테이너 높이 가져오기. SFcontainer 요소의 **높이(Height)**를 픽셀 단위로 가져옵니다.
   state.section1.height = state.section1.sectionBox.offsetHeight; // 컨테이너 높이 가져오기. SFcontainer 요소의 **높이(Height)**를 픽셀 단위로 가져옵니다.
   state.section1.svgHeight = state.section1.svgElement.getBoundingClientRect().height; // SVG 높이 가져오기. svgElement 요소의 뷰포트 내의 높이를 픽셀 단위로 가져옵니다.
   state.section1.starterY = 0
 
-  state.section2.top = state.section2.sectionBox.getBoundingClientRect().top  + window.scrollY; // 컨테이너 높이 가져오기. SFcontainer 요소의 **높이(Height)**를 픽셀 단위로 가져옵니다.
-  state.section2.bottom = state.section2.sectionBox.getBoundingClientRect().bottom  + window.scrollY; // 컨테이너 높이 가져오기. SFcontainer 요소의 **높이(Height)**를 픽셀 단위로 가져옵니다.
+  state.section2.top = state.section2.sectionBox.getBoundingClientRect().top; // 컨테이너 높이 가져오기. SFcontainer 요소의 **높이(Height)**를 픽셀 단위로 가져옵니다.
+  state.section2.bottom = state.section2.sectionBox.getBoundingClientRect().bottom; // 컨테이너 높이 가져오기. SFcontainer 요소의 **높이(Height)**를 픽셀 단위로 가져옵니다.
   state.section2.height = state.section2.sectionBox.offsetHeight;
   state.section2.svgHeight = state.section2.svgElement.getBoundingClientRect().height; // SVG 높이 가져오기. svgElement 요소의 뷰포트 내의 높이를 픽셀 단위로 가져옵니다.
-  state.section2.starterY = state.section2.sectionBox.getBoundingClientRect().top  + window.scrollY;
+  state.section2.starterY = state.section2.sectionBox.getBoundingClientRect().top;
 
-}
+  // 3. 스크롤 이벤트 처리
+  window.addEventListener("scroll", () => {
+    scrollEvent()
+  });
+})
 
-function onScrollEvent() {
+function scrollEvent() {
 
   if (state.section1.starterY <= window.scrollY && window.scrollY < state.section2.starterY) {
 
@@ -152,7 +123,7 @@ function onScrollEvent() {
         'maxTranslateY': maxTranslateY,
         'translateY': translateY,
       }
-      // console.log('test2 ', test2);
+      console.log('test2 ', test2);
       // if (translateY <= 200) {
         state.section2.svgElement.style.transform = `translate(-50%, ${translateY}px)`;
       // } else {

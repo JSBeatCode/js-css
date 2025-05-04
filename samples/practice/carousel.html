@@ -71,6 +71,10 @@
             border-radius: 50%;
             cursor: pointer;
         }
+
+        .bullet.active {
+            background-color: white;
+        }
     </style>
 </head>
 <body>
@@ -97,15 +101,36 @@
         let index = 0;
 
         document.getElementById('prevButton').addEventListener('click', () => {
-            console.log('clicked', texts);
             index = (index === 0) ? texts.length - 1 : index - 1;
-            console.log('index: ', index);
             updateCarousel();
+        })
+
+        document.getElementById('nextButton').addEventListener('click', () => {
+            index = (index === texts.length - 1) ? 0 : index + 1;
+            updateCarousel();
+        })
+
+        bullets.forEach(bullet => {
+            bullet.addEventListener('click', (e) => {
+                index = parseInt(e.target.getAttribute('data-index'))
+                updateCarousel();
+            })
         })
 
         function updateCarousel () {
             wrapper.style.transform = `translateX(-${index * 100}%)`;
+            updatePagination()
         }
+
+        function updatePagination() {
+            bullets.forEach(bullet => bullet.classList.remove('active'))
+            bullets[index].classList.add('active')
+        }
+
+        setInterval(() => {
+            index = (index === texts.length - 1) ? 0 : index + 1;
+            updateCarousel();
+        }, 3000)
     </script>
 </body>
 </html>

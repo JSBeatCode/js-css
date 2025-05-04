@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Circle Scroll Effect</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 200vh; /* 스크롤할 수 있도록 길게 설정 */
+      overflow: hidden; /* 기본 스크롤 방지 */
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .scrollable {
+      overflow-y: auto;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="circleCanvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById("circleCanvas");
+    const ctx = canvas.getContext("2d");
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+
+    window.addEventListener("resize", () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    });
+
+    let isAnimating = false;
+
+    window.addEventListener("wheel", (e) => {
+      if (isAnimating) return;
+
+      e.preventDefault();
+
+      isAnimating = true;
+      let radius = 0;
+      const maxRadius = 100;
+      const x = width / 2;
+      const y = height / 2;
+
+      const animateCircle = () => {
+        ctx.clearRect(0, 0, width, height);
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
+        ctx.lineWidth = 5;
+        ctx.stroke();
+
+        radius += 5;
+
+        if (radius <= maxRadius) {
+          requestAnimationFrame(animateCircle);
+        } else {
+          ctx.clearRect(0, 0, width, height);
+          window.scrollBy({
+            top: e.deltaY,
+            behavior: "smooth"
+          });
+          isAnimating = false;
+        }
+      };
+
+      animateCircle();
+    }, { passive: false });
+  </script>
+</body>
+</html>

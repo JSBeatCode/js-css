@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Unlock Scroll After Circle Draw</title>
+  <style>
+    body {
+      margin: 0;
+      height: 300vh; /* 충분한 스크롤 영역 */
+      overflow-y: scroll;
+    }
+
+    .svg-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 200px;
+      height: 200px;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    circle {
+      fill: none;
+      stroke: #e74c3c;
+      stroke-width: 10;
+      stroke-dasharray: 628; /* 2πr for r=100 */
+      stroke-dashoffset: 628;
+    }
+  </style>
+</head>
+<body>
+
+<div class="svg-container">
+  <svg viewBox="0 0 220 220">
+    <circle cx="110" cy="110" r="100" />
+  </svg>
+</div>
+
+<script>
+  const circle = document.querySelector("circle");
+  const fullLength = 2 * Math.PI * 100; // r = 100
+  let currentOffset = fullLength;
+  let scrollUnlocked = false;
+
+  function drawCircleProgress(deltaY) {
+    // 휠을 아래로 돌린 경우에만 동작
+    if (deltaY > 0) {
+      currentOffset -= 30;
+      if (currentOffset < 0) currentOffset = 0;
+      circle.style.strokeDashoffset = currentOffset;
+
+      // 다 그려졌으면 스크롤 잠금 해제
+      if (currentOffset === 0) {
+        scrollUnlocked = true;
+      }
+    }
+  }
+
+  window.addEventListener("wheel", (e) => {
+    if (!scrollUnlocked) {
+      e.preventDefault();
+      drawCircleProgress(e.deltaY);
+    }
+    // scrollUnlocked 되면 브라우저 기본 스크롤 동작 허용
+  }, { passive: false });
+</script>
+
+</body>
+</html>
