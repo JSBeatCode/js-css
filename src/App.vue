@@ -1,10 +1,19 @@
 <template>
   <div class="container">
+    <div class="svg-circle-container">
+      <svg class="svg-circle" viewBox="0 0 220 220">
+          <circle cx="110" cy="110" r="100" />
+      </svg>
+</div>
     <!-- <div style="height: 50%;"> -->
     <ScrollFollow />
-    <ScrollFollow2 />
+    <div style="height: 100vh">
+    </div>
     <!-- <HeightPercentage /> -->
-    <Circle />
+    <!-- <Circle /> -->
+    <ScrollFollow2 />
+    <div style="height: 100vh">
+    </div>
     <!-- </div> -->
     <!-- <div style="height: 50%;">
       <HeightPercentage />
@@ -18,7 +27,7 @@ import ScrollFollow2 from './components/ScrollFollow2.vue'
 // import HelloWorld from './components/HelloWorld.vue'
 // import HeightPercentage from './components/HeightPercentage.vue'
 // import Triangle from './components/Triangle.vue'
-import Circle from './components/Circle.vue'
+// import Circle from './components/Circle.vue'
 
 import { onMounted, reactive } from 'vue'
 
@@ -87,7 +96,8 @@ function getElementsPosition() {
   state.section1.bottom = state.section1.sectionBox.getBoundingClientRect().bottom + window.scrollY; // 컨테이너 높이 가져오기. SFcontainer 요소의 **높이(Height)**를 픽셀 단위로 가져옵니다.
   state.section1.height = state.section1.sectionBox.offsetHeight; // 컨테이너 높이 가져오기. SFcontainer 요소의 **높이(Height)**를 픽셀 단위로 가져옵니다.
   state.section1.svgHeight = state.section1.svgElement.getBoundingClientRect().height; // SVG 높이 가져오기. svgElement 요소의 뷰포트 내의 높이를 픽셀 단위로 가져옵니다.
-  state.section1.starterY = 0
+  // state.section1.starterY = 0
+  state.section1.starterY = state.section1.sectionBox.getBoundingClientRect().top  + window.scrollY;
 
   state.section2.top = state.section2.sectionBox.getBoundingClientRect().top  + window.scrollY; // 컨테이너 높이 가져오기. SFcontainer 요소의 **높이(Height)**를 픽셀 단위로 가져옵니다.
   state.section2.bottom = state.section2.sectionBox.getBoundingClientRect().bottom  + window.scrollY; // 컨테이너 높이 가져오기. SFcontainer 요소의 **높이(Height)**를 픽셀 단위로 가져옵니다.
@@ -99,10 +109,12 @@ function getElementsPosition() {
 
 function onScrollEvent() {
 
-  if (state.section1.starterY <= window.scrollY && window.scrollY < state.section2.starterY) {
+  // if (state.section1.starterY <= window.scrollY && window.scrollY < state.section2.starterY) {
+  if (state.section1.starterY <= window.scrollY) {
 
     // 전체 문서에서 현재 스크롤 위치를 0 ~ 1 사이의 비율로 계산
-    const scrollY = window.scrollY / state.section1.height; // (scroll위치  0 / 500) 0.0022~0.45
+    // const scrollY = window.scrollY / state.section1.height; // (scroll위치  0 / 500) 0.0022~0.45
+    const scrollY = (window.scrollY - state.section1.top) / (state.section1.bottom - state.section1.top); // 이 두개의 처음 (scroll위치 4  / 500) 나와야됨. scrollY는 0.0022~0.45
 
     if (scrollY <= 0.45) {
       // if (window.scrollY <= (state.section1.height / 2)) {
@@ -125,10 +137,11 @@ function onScrollEvent() {
       if (translateY <= (state.section1.height / 2.5)) {
         state.section1.svgElement.style.transform = `translate(-50%, ${translateY}px)`;
       }
-    } else {
+    } 
+    // else {
       // 스크롤이 이제 더이상 동작 안해야 할때 max 값으로 고정함
-      state.section1.svgElement.style.transform = `translate(-50%, ${(state.section1.height / 2.5)}px)`;
-    }
+      // state.section1.svgElement.style.transform = `translate(-50%, ${(state.section1.height / 2.5)}px)`;
+    // }
   }
 
   if (state.section2.starterY <= window.scrollY) {
@@ -170,7 +183,7 @@ function onScrollEvent() {
 </script>
 
 
-<style scoped>
+<style>
 .container {
   /* position: absolute; */
   /* margin: 0; */
@@ -185,4 +198,30 @@ function onScrollEvent() {
   /* justify-content: center; /* 가로 방향으로 중앙 정렬 */
   /* align-items: center; /* 세로 방향으로 중앙 정렬 */
 }
+
+
+    .svg-circle-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 200px;
+      height: 200px;
+      z-index: 1000;
+      border: 2px solid green;
+    }
+
+    .svg-circle {
+      width: 100%;
+      height: 100%;
+    }
+
+    circle {
+      fill: none;
+      stroke: #3498db;
+      stroke-width: 8;
+      stroke-dasharray: 628; /* 2 * PI * r (r = 100) */
+      stroke-dashoffset: 628;
+      transition: stroke-dashoffset 0.1s linear;
+    }
 </style>

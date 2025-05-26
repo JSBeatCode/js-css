@@ -36,7 +36,9 @@
   </style>
 </head>
 <body>
+<div style="height: 100vh; border: 1px solid" >
 
+</div>
 <div class="svg-container">
   <svg viewBox="0 0 220 220">
     <circle cx="110" cy="110" r="100" />
@@ -45,8 +47,11 @@
 
 <script>
   const circle = document.querySelector("circle");
+  circle.style.strokeDashoffset = null;
   const fullLength = 2 * Math.PI * 100; // r = 100
-  let currentOffset = fullLength;
+  // const totalLength = 2 * Math.PI * 100; // r = 100
+  // let currentOffset = fullLength;
+  let currentOffset = circle.getTotalLength()
   let scrollUnlocked = false;
 
   function drawCircleProgress(deltaY) {
@@ -57,19 +62,52 @@
       circle.style.strokeDashoffset = currentOffset;
 
       // 다 그려졌으면 스크롤 잠금 해제
+      console.log('currentOffset: ', currentOffset);
+      if (currentOffset === 0) {
+        scrollUnlocked = true;
+      }
+    } else {
+      currentOffset += 30;
+      if (currentOffset >= fullLength) currentOffset = fullLength;
+      circle.style.strokeDashoffset = currentOffset;
+
+      // 다 그려졌으면 스크롤 잠금 해제
+      console.log('currentOffset: ', currentOffset);
       if (currentOffset === 0) {
         scrollUnlocked = true;
       }
     }
+    
   }
 
-  window.addEventListener("wheel", (e) => {
+  console.log('');
+
+   window.addEventListener("wheel", (e) => {
+   // window.addEventListener("scroll", (e) => {
+    const scrollPosition = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
+    const windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+    const documentHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+  
+    // 전체 페이지의 가운데 위치
+    const centerPosition = (documentHeight - windowHeight) / 2.5;
+    console.log('centerPosition, scrollPosition, e.deltaY: ', centerPosition, scrollPosition, e.deltaY);
+  // 호출
+  
+
+  // 호출
+  // lockScrollAtCenter();
+
+  // if (isScrollBarInCenter(e)){
+    // if (scrollPosition > centerPosition) {
     if (!scrollUnlocked) {
       e.preventDefault();
       drawCircleProgress(e.deltaY);
     }
+  // }
+
     // scrollUnlocked 되면 브라우저 기본 스크롤 동작 허용
   }, { passive: false });
+
 </script>
 
 </body>

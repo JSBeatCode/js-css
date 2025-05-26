@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Scroll Limit</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 300vh; /* 전체 높이 300vh */
+      background: linear-gradient(to bottom, lightblue, lightgreen, lightcoral);
+
+
+    }
+    .content {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: white;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="content">스크롤을 내려보세요 (150vh 이상 제한)</div>
+
+  <script>
+    const maxScroll = window.innerHeight * 1.2; // 150vh 위치 (중간)
+    //let dontMoveScroll = false;
+    //let isWheel = false;
+    let isScrollOnced = false;
+    let lastScrollTop = 0;
+
+    const originalAddEventListener = EventTarget.prototype.addEventListener;
+
+
+EventTarget.prototype.addEventListener = function(type, listener, options) {
+  
+  const wrapped = function(event) {
+    console.log(`[${type}] 감지됨`, maxScroll, window.scrollY);
+    // console.log('event: ', event);
+    //return setTimeout(() => {
+    // 당신의 로직
+    // preventDefault() 가능해짐
+    if (type === 'wheel' && ((window.scrollY + event.deltaY) >= maxScroll) && (event.deltaY > 0)) {
+      
+      //if (event.deltaY < 0) {
+        //console.log('휠 업: 위로 스크롤');
+      //} else if (event.deltaY > 0) {
+        //console.log('휠 다운: 아래로 스크롤');
+      //}
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      event.preventDefault();
+      window.removeEventListener('scroll', scorllEvent, { capture: true, passive: false })
+      return false;
+    }
+
+
+    return listener.call(this, event);
+    // }, 100)
+    
+  };
+
+  // passive를 명시적으로 false로 설정
+  let realOptions = options;
+  if (typeof options === 'object') {
+    realOptions = { ...options, passive: false };
+  } else if (options === true) {
+    // options가 capture만 boolean으로 들어온 경우
+    realOptions = { capture: true, passive: false };
+  } else {
+    realOptions = { passive: false };
+  }
+  console.log('realOptions: ', realOptions);
+
+  return originalAddEventListener.call(this, type, wrapped, realOptions);
+};
+
+    window.addEventListener('scroll', scorllEvent, { capture: true, passive: false })
+    // 내 로직: 가장 먼저 실행되길 원하는 핸들러
+    window.addEventListener('wheel', wheelEvent1, { capture: true, passive: false });
+
+  
+
+    // 이후 등록된 일반 핸들러들
+    //window.addEventListener('wheel', wheelEvent2);
+
+    //document.addEventListener('wheel', wheelEvent3);
+
+    
+    function wheelEvent1(event) {
+      console.log('✅ 내 로직 (가장 먼저 실행됨)');
+    }
+        function wheelEvent2(event) {
+      console.log('🔁 다른 핸들러 1');
+    }
+        function wheelEvent3(event) {
+      console.log('🔁 다른 핸들러 3');
+    }
+
+  function wheelEventStepOne() {
+    if (isScrolling) return;
+
+    isScrolling = true;
+
+    // 여기서 원하는 만큼 스크롤 수행
+    console.log('Scroll once!');
+    window.scrollBy(0, 100); // 아래로 100px 스크롤
+
+    setTimeout(() => {
+      isScrolling = false;
+    }, 500); // 0.5초 동안 추가 스크롤 막기
+  }
+
+
+    function scrollRemoveEvent(event) {
+      event.preventDefault(); // 스크롤 기본 동작을 방지
+
+    }
+
+    function scorllEvent(event){
+        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+  if (currentScrollTop > lastScrollTop) {
+    console.log('스크롤이 아래로 내려감');
+  } else if (currentScrollTop < lastScrollTop) {
+    console.log('스크롤이 위로 올라감');
+    dontMoveScroll = false
+  }
+
+
+      console.log('SCROLL!!', maxScroll, window.scrollY, currentScrollTop, lastScrollTop);
+      if ((window.scrollY > maxScroll) && currentScrollTop > lastScrollTop) {
+        console.log('  멈춰야 됨');
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        //isScrollOnced = true
+        //if (isScrollOnced) {
+          //window.scrollBy(0, 0); // 아래로 100px 스크롤
+        //}
+      }
+
+  lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop; // 음수 방지
+ //  stopEvent(event)
+      
+      // if (isWheel) {
+        // stopEvent(event)
+         
+      //}
+    }
+
+    
+    function stopEvent(e){
+        //console.log('maxScroll: ', maxScroll);
+        //console.log('window.scrollY: ', window.scrollY);
+      //if (window.scrollY > maxScroll) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+      // window.scrollTo(0, maxScroll); // 스크롤을 강제로 고정
+      //if (!dontMoveScroll) {
+      //    dontMoveScroll = true
+            window.scrollTo({
+            top: maxScroll,
+            left: 0,
+           behavior: 'auto' // 선택 사항
+          });
+      //}
+        //window.removeEventListener('wheel')
+        //} else {
+        //    window.addEventListener('wheel', (event) => {
+         //       stopEvent(event);
+          //  })
+        //}
+    }
+  </script>
+</body>
+</html>

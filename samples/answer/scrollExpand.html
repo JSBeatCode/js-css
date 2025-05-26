@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<!-- HTML5 문서임을 선언 -->
+
+<html lang="en">
+<!-- 문서의 언어를 영어로 설정 -->
+
+<head>
+  <meta charset="UTF-8" />
+  <!-- 문서의 문자 인코딩을 UTF-8로 설정 -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <!-- 모바일 기기에서도 화면을 제대로 표시하기 위한 설정 -->
+
+  <title>Smooth Scroll Expand</title>
+  <!-- 브라우저 탭에 표시될 문서 제목 -->
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 300vh;
+      font-family: sans-serif;
+    }
+    /* 페이지 기본 스타일
+       - 여백 제거
+       - 전체 높이를 3배 화면 크기로 지정하여 스크롤 가능하게 함
+       - 글꼴은 기본 산세리프 글꼴 사용 */
+
+    .spacer {
+      height: 100vh;
+      background: #eee;
+    }
+    /* 상단 및 하단의 공간을 위한 요소
+       - 높이 1화면
+       - 밝은 회색 배경 */
+
+    .trigger-section {
+      height: 200vh; /* 충분히 긴 높이 */
+      position: relative;
+      background: white;
+    }
+    /* 스크롤 이벤트에 따라 애니메이션이 발생할 구간
+       - 높이를 두 화면으로 설정하여 스크롤 여유 확보
+       - 상대 위치 설정 (자식 요소 위치 계산에 사용) */
+
+    .sticky-wrapper {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      z-index: 10;
+      background: white;
+    }
+    /* 화면 상단에 고정되는 박스 컨테이너
+       - sticky: 스크롤 중 특정 조건에서 화면 상단에 고정
+       - height: 100vh로 한 화면을 채움
+       - flex를 사용해 자식 요소 중앙 정렬
+       - z-index로 다른 요소보다 앞에 표시되도록 설정 */
+
+    .box {
+      height: 200px;
+      width: 200px;
+      background: #3498db;
+      transition: width 0.1s linear;
+    }
+    /* 실제로 크기가 확대되는 파란색 박스
+       - 초기 크기: 200px x 200px
+       - width 속성에만 트랜지션 적용 (부드러운 변화) */
+  </style>
+</head>
+
+<body>
+  <!-- 본문 시작 -->
+
+  <div class="spacer"></div>
+  <!-- 상단 공간 확보용: 스크롤을 내릴 수 있게 하기 위한 공간 -->
+
+  <div class="trigger-section" id="trigger">
+    <!-- 크기 확대 애니메이션이 발생할 섹션 -->
+
+    <div class="sticky-wrapper">
+      <!-- 화면 상단에 고정될 박스를 감싸는 요소 -->
+
+      <div class="box" id="box"></div>
+      <!-- 실제 크기가 변화하는 파란색 박스 -->
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+  <!-- 하단 공간 확보용: 충분한 스크롤 영역 제공 -->
+
+  <script>
+    // 스크롤에 따라 박스의 너비를 동적으로 변경하는 스크립트
+
+    const trigger = document.getElementById("trigger");
+    // 애니메이션 구간(트리거 섹션)을 가져옴
+
+    const box = document.getElementById("box");
+    // 크기를 변화시킬 대상 박스 요소
+
+    const minWidth = 200;
+    // 박스의 최소 너비 (초기 너비)
+
+    const maxWidth = window.innerWidth;
+    // 박스가 최대로 확장될 너비 (브라우저 전체 너비)
+
+    window.addEventListener("scroll", () => {
+      // 스크롤 이벤트가 발생할 때마다 실행
+
+      const rect = trigger.getBoundingClientRect();
+      // trigger 섹션의 현재 화면 상 상대적인 위치와 크기를 가져옴
+
+      const sectionHeight = trigger.offsetHeight - window.innerHeight;
+      // 스크롤을 통해 변화가 발생하는 전체 높이 계산
+      // trigger 높이에서 한 화면 높이를 뺀 값
+
+      const scrolled = Math.min(Math.max(-rect.top, 0), sectionHeight);
+      // 얼마나 스크롤 되었는지 계산
+      // 스크롤 시작 전에는 0, 스크롤 끝을 넘으면 sectionHeight로 제한
+
+      const progress = scrolled / sectionHeight;
+      // 스크롤 진행률 (0 ~ 1 사이의 값)
+
+      const currentWidth = minWidth + (maxWidth - minWidth) * progress;
+      // 현재 너비 계산: 최소 너비에서 시작해서 진행률에 따라 선형적으로 증가
+
+      box.style.width = `${currentWidth}px`;
+      // 계산된 너비를 박스에 적용
+    });
+  </script>
+
+</body>
+</html>

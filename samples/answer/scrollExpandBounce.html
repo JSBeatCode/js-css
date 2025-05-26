@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bouncy Expand</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 300vh;
+      font-family: sans-serif;
+    }
+
+    .spacer {
+      height: 100vh;
+      background: #eee;
+    }
+
+    .trigger-section {
+      height: 200vh;
+      position: relative;
+      background: white;
+    }
+
+    .sticky-wrapper {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      z-index: 10;
+      background: white;
+    }
+
+    .box {
+      height: 200px;
+      width: 200px;
+      background: #3498db;
+      transition: width 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      /* <- 여기서 cubic-bezier로 바운스 감도 조정 */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="spacer"></div>
+
+  <div class="trigger-section" id="trigger">
+    <div class="sticky-wrapper">
+      <div class="box" id="box"></div>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <script>
+    const trigger = document.getElementById("trigger");
+    const box = document.getElementById("box");
+
+    const minWidth = 200;
+    const maxWidth = window.innerWidth;
+
+    let lastScrollY = window.scrollY;
+
+    function easeInOutCubic(t) {
+      return t < 0.5
+        ? 4 * t * t * t
+        : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    window.addEventListener("scroll", () => {
+      const rect = trigger.getBoundingClientRect();
+      const sectionHeight = trigger.offsetHeight - window.innerHeight;
+      const scrolled = Math.min(Math.max(-rect.top, 0), sectionHeight);
+
+      const rawProgress = scrolled / sectionHeight;
+      const easedProgress = easeInOutCubic(rawProgress);
+
+      // 스크롤 속도 계산
+      const scrollVelocity = window.scrollY - lastScrollY;
+      lastScrollY = window.scrollY;
+
+      // 바운스 overshoot (스크롤이 빠를수록 튀기)
+      const bounceFactor = Math.min(Math.max(scrollVelocity * 0.1, -20), 20);
+
+      const currentWidth = minWidth + (maxWidth - minWidth) * easedProgress + bounceFactor;
+      box.style.width = `${currentWidth}px`;
+    });
+  </script>
+
+</body>
+</html>

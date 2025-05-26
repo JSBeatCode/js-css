@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<!-- HTML5 문서임을 선언 -->
+
+<html lang="ko">
+<!-- 문서의 주 언어를 한국어로 설정 -->
+
+<head>
+  <meta charset="UTF-8">
+  <!-- 문서의 문자 인코딩을 UTF-8로 설정 (한글 깨짐 방지) -->
+
+  <title>Section2 스크롤 고정 + 카드 등장</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden; /* 좌우 스크롤 생기지 않도록 방지 */
+    }
+
+    .section {
+      width: 100%; /* 각 section이 화면 너비를 가득 차지하도록 설정 */
+    }
+
+    .section1 {
+      height: 100vh; /* 화면 100% 높이 (1 viewport height) */
+      background-color: #FF6B6B; /* 배경색: 붉은 색상 */
+      display: flex; /* Flexbox 레이아웃 사용 */
+      align-items: center; /* 수직 가운데 정렬 */
+      justify-content: center; /* 수평 가운데 정렬 */
+      font-size: 2rem; /* 글씨 크기 키움 */
+      color: white; /* 글자색 흰색 */
+    }
+
+    .section2-wrapper {
+      height: 200vh; /* 화면 높이의 2배로 설정 (스크롤 여유 공간 확보) */
+      position: relative; /* 자식 요소가 absolute일 때 기준점 역할 */
+    }
+
+    .section2 {
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh; /* section2는 화면 하나 크기만큼 보여짐 */
+      background-color: #6BCB77; /* 연두색 배경 */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      color: white;
+      z-index: 10; /* 다른 요소들보다 앞에 보이도록 설정 */
+      /* 위치는 JS에서 scroll에 따라 fixed 또는 absolute로 조정됨 */
+    }
+
+    .cards {
+      position: relative; /* 내부 카드들의 절대 위치 기준이 됨 */
+      width: 300px;
+      height: 400px;
+    }
+
+    .card {
+      position: absolute; /* 겹쳐 보이게끔 설정 */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px; /* 모서리를 둥글게 처리 */
+      background-color: white;
+      color: #333;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+      opacity: 0; /* 초기 상태는 투명하게 설정 */
+      transform: translateY(50px); /* 아래로 50px 이동한 상태에서 시작 */
+      transition: opacity 0.4s ease, transform 0.4s ease; /* 부드러운 전환 효과 */
+    }
+
+    /* 각 카드에 색상과 z-index를 다르게 적용하여 순서대로 보이게 함 */
+    .card:nth-child(1) {
+      background-color: #FFD93D; /* 노란색 */
+      z-index: 1;
+    }
+
+    .card:nth-child(2) {
+      background-color: #FF6B6B; /* 빨간색 */
+      z-index: 2;
+    }
+
+    .card:nth-child(3) {
+      background-color: #4D96FF; /* 파란색 */
+      z-index: 3;
+    }
+
+    .section3 {
+      height: 100vh;
+      background-color: #4D96FF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 첫 번째 섹션 -->
+  <div class="section section1">
+    Section 1
+  </div>
+
+  <!-- 두 번째 섹션을 감싸는 wrapper (스크롤 길이 확보용) -->
+  <div class="section2-wrapper" id="section2-wrapper">
+    <!-- 고정/해제 되며 카드가 나타나는 실제 영역 -->
+    <div class="section2" id="section2">
+      <div class="cards">
+        <!-- 카드 3개 -->
+        <div class="card" id="card1">Card 1</div>
+        <div class="card" id="card2">Card 2</div>
+        <div class="card" id="card3">Card 3</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 세 번째 섹션 -->
+  <div class="section section3">
+    Section 3
+  </div>
+
+  <script>
+    // section2와 wrapper 요소 가져오기
+    const section2 = document.getElementById('section2');
+    const wrapper = document.getElementById('section2-wrapper');
+
+    // 각 카드 요소 가져오기
+    const card1 = document.getElementById('card1');
+    const card2 = document.getElementById('card2');
+    const card3 = document.getElementById('card3');
+
+    // 스크롤 이벤트 발생 시 동작
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY; // 현재 스크롤 위치
+
+      const start = wrapper.offsetTop; // section2-wrapper 시작 지점 (스크롤 기준)
+      const end = start + wrapper.offsetHeight; // wrapper 끝 위치
+      const releasePoint = start + 1000; // section2를 고정 해제할 스크롤 위치
+
+      // section2 고정 로직
+      if (scrollY >= releasePoint) {
+        // releasePoint보다 많이 스크롤하면 고정 해제 (absolute)
+        section2.style.position = 'absolute';
+        section2.style.top = '1000px';
+      } else if (scrollY >= start) {
+        // section2가 고정되어야 하는 구간 (스크롤 중간)
+        section2.style.position = 'fixed';
+        section2.style.top = '0';
+      } else {
+        // 고정 시작 전 (스크롤 위쪽)
+        section2.style.position = 'absolute';
+        section2.style.top = '0';
+      }
+
+      // 카드 등장 애니메이션 처리
+      const progress = Math.min(Math.max((scrollY - start) / 1000, 0), 1);
+      // progress: 0(시작) ~ 1(끝) 사이 값
+
+      // 카드 1 등장 구간: progress 0 ~ 0.33
+      if (progress < 0.33) {
+        const p = progress / 0.33; // 0 ~ 1 로 정규화
+        card1.style.opacity = p; // 투명도 증가
+        card1.style.transform = `translateY(${50 * (1 - p)}px)`; // 아래에서 위로 올라옴
+        card2.style.opacity = 0;
+        card3.style.opacity = 0;
+      } 
+      // 카드 2 등장 구간: progress 0.33 ~ 0.66
+      else if (progress < 0.66) {
+        // 카드1은 완전히 나타남
+        card1.style.opacity = 1;
+        card1.style.transform = `translateY(0px)`;
+
+        const p = (progress - 0.33) / 0.33; // 카드2 비율 계산
+        card2.style.opacity = p;
+        card2.style.transform = `translateY(${50 * (1 - p)}px)`;
+        card3.style.opacity = 0;
+      } 
+      // 카드 3 등장 구간: progress 0.66 ~ 1
+      else {
+        // 카드1, 카드2는 다 보임
+        card1.style.opacity = 1;
+        card1.style.transform = `translateY(0px)`;
+        card2.style.opacity = 1;
+        card2.style.transform = `translateY(0px)`;
+
+        const p = (progress - 0.66) / 0.34; // 카드3 비율 계산
+        card3.style.opacity = p;
+        card3.style.transform = `translateY(${50 * (1 - p)}px)`;
+      }
+    });
+  </script>
+
+</body>
+</html>

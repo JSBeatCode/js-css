@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Section2 스크롤 고정</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    .section {
+      width: 100%;
+    }
+
+    .section1 {
+      height: 100vh;
+      background-color: #FF6B6B;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+    }
+
+    .section2-wrapper {
+      height: 200vh; /* 스크롤 여유 공간 */
+      position: relative;
+    }
+
+    .section2 {
+      /*position: fixed;*/
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background-color: #6BCB77;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      color: white;
+      z-index: 10;
+    }
+
+    .section3 {
+      height: 100vh;
+      background-color: #4D96FF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="section section1">
+    Section 1
+  </div>
+
+  <div class="section2-wrapper" id="section2-wrapper">
+    <div class="section2" id="section2">
+      Section 2 (멈춰있다가 이동)
+    </div>
+  </div>
+
+  <div class="section section3">
+    Section 3
+  </div>
+
+  <script>
+    const section2 = document.getElementById('section2');
+    const wrapper = document.getElementById('section2-wrapper');
+
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+
+      // section2-wrapper 시작 위치
+      const start = wrapper.offsetTop;
+      const end = start + wrapper.offsetHeight;
+      const releasePoint = start + 1000; // section2 고정 해제 위치
+
+      if (scrollY >= releasePoint) {
+        // 고정 해제 (absolute로 바꾸고 wrapper 내부에 고정)
+        section2.style.position = 'absolute';
+        section2.style.top = '1000px';
+      } else if (scrollY >= start) {
+        // section2 고정
+        section2.style.position = 'fixed';
+        section2.style.top = '0';
+      } else {
+        // section1에 있을 때는 고정 해제해서 숨김
+        section2.style.position = 'absolute';
+        section2.style.top = '0';
+      }
+    });
+  </script>
+
+</body>
+</html>

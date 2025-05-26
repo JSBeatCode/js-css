@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>즉시 반응하는 커스텀 스크롤</title>
+  <style>
+    /* 기본 레이아웃 설정 */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden; /* 기본 스크롤 제거 */
+    }
+
+    /* 스크롤이 적용되는 실제 콘텐츠 영역 */
+    .scroll-container {
+      height: 100%;
+      width: 100%;
+      overflow-y: scroll;
+      /* scroll-behavior: smooth; 제거 => 즉시 반응 */
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .scroll-container::-webkit-scrollbar {
+      display: none; /* 크롬 스크롤바 제거 */
+    }
+
+    .content {
+      height: 300vh;
+      background: linear-gradient(#ff595e, #1982c4, #6a4c93);
+    }
+
+    /* 커스텀 스크롤 영역 */
+    .custom-scrollbar {
+      position: fixed;
+      top: 0;
+      right: 5px;
+      width: 6px;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    /* 스크롤바의 움직이는 Thumb */
+    .custom-thumb {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 3px;
+      height: 50px;
+      cursor: pointer;
+    }
+
+    .custom-thumb:hover {
+      background: white;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scroll-container" id="scrollContainer">
+    <div class="content"></div>
+  </div>
+
+  <div class="custom-scrollbar">
+    <div class="custom-thumb" id="customThumb"></div>
+  </div>
+
+  <script>
+  // 스크롤 가능한 요소와 커스텀 스크롤 Thumb 요소를 가져옴
+  const container = document.getElementById('scrollContainer');
+  const thumb = document.getElementById('customThumb');
+
+  let isDragging = false; // 현재 드래그 중인지 여부를 저장하는 변수
+
+  // Thumb(스크롤 손잡이)의 크기와 위치를 콘텐츠 스크롤 상태에 따라 갱신하는 함수
+  function updateThumb() {
+    const scrollTop = container.scrollTop;         // 현재 스크롤된 위치(px)
+    const scrollHeight = container.scrollHeight;   // 전체 스크롤 영역 높이
+    const clientHeight = container.clientHeight;   // 현재 화면에 보이는 영역 높이
+
+    // Thumb의 높이를 비율에 따라 계산 (화면이 작을수록 Thumb는 작아짐)
+    const thumbHeight = Math.max(clientHeight * clientHeight / scrollHeight, 30); // 최소 30px 유지
+
+    // Thumb의 위치를 실제 스크롤된 위치에 따라 계산
+    const thumbTop = scrollTop * (clientHeight - thumbHeight) / (scrollHeight - clientHeight);
+
+    // Thumb 높이 및 위치 설정
+    thumb.style.height = `${thumbHeight}px`;
+    thumb.style.top = `${thumbTop}px`;
+  }
+
+  // 사용자가 실제로 스크롤 했을 때 Thumb 위치 갱신
+  container.addEventListener('scroll', updateThumb);
+
+  // 창 크기가 변경되었을 때 Thumb 다시 계산
+  window.addEventListener('resize', updateThumb);
+
+  // 페이지 로딩이 완료되면 처음 한 번 Thumb 설정
+  window.addEventListener('load', updateThumb);
+
+  // Thumb 클릭 후 드래그 시작 처리
+  thumb.addEventListener('mousedown', (e) => {
+    isDragging = true; // 드래그 시작
+    document.body.style.userSelect = 'none'; // 드래그 중 텍스트 선택 방지 (UX 향상)
+  });
+
+  // 마우스 이동 시 Thumb를 마우스 위치에 맞춰 이동시키고 스크롤 위치도 이동
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return; // 드래그 중이 아니면 무시
+
+    const containerHeight = container.clientHeight;   // 화면 높이
+    const contentHeight = container.scrollHeight;     // 전체 콘텐츠 높이
+    const thumbHeight = thumb.offsetHeight;           // Thumb 높이
+
+    // 마우스 위치 기준으로 Thumb의 새 위치 계산 (중심 기준으로 위치 설정)
+    let mouseY = e.clientY;
+    let newThumbTop = mouseY - thumbHeight / 2;
+
+    // Thumb가 스크롤 영역 바깥으로 나가지 않도록 제한
+    newThumbTop = Math.max(0, Math.min(containerHeight - thumbHeight, newThumbTop));
+
+    // Thumb 위치에 따라 실제 스크롤 위치 계산 (비율 기반)
+    const scrollRatio = newThumbTop / (containerHeight - thumbHeight);
+    container.scrollTop = scrollRatio * (contentHeight - containerHeight); // 실제 스크롤 이동
+
+    // Thumb 위치 화면에 반영
+    thumb.style.top = `${newThumbTop}px`;
+  });
+
+  // 마우스 버튼을 놓으면 드래그 종료 처리
+  document.addEventListener('mouseup', () => {
+    isDragging = false; // 드래그 종료
+    document.body.style.userSelect = ''; // 텍스트 선택 가능 상태로 복원
+  });
+</script>
+
+</body>
+</html>

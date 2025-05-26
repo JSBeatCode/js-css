@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Scroll Limit</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 300vh; /* 전체 높이 300vh */
+      background: linear-gradient(to bottom, lightblue, lightgreen, lightcoral);
+    }
+    .content {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: white;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="content">스크롤을 내려보세요 (150vh 이상 제한)</div>
+
+  <script>
+    const maxScroll = window.innerHeight * 1.5; // 150vh 위치 (중간)
+    let dontMoveScroll = false;
+    let isWheel = false;
+const originalAddEventListener = EventTarget.prototype.addEventListener;
+
+EventTarget.prototype.addEventListener = function(type, listener, options) {
+  console.log(`이벤트 리스너 등록됨:`, type, this);
+
+  // 예: 모든 등록된 이벤트에 대해 선처리 로직 삽입 가능
+  const wrappedListener = function(event) {
+    console.log(`>>> [${type}] 이벤트 발생 - 먼저 실행되는 로직`);
+    return listener.call(this, event);
+  };
+
+  return originalAddEventListener.call(this, type, wrappedListener, options);
+};
+
+
+    window.addEventListener('scroll', scorllEvent, { capture: true, passive: false })
+    // 내 로직: 가장 먼저 실행되길 원하는 핸들러
+    window.addEventListener('wheel', wheelEvent1, { capture: true, passive: false });
+
+    // 이후 등록된 일반 핸들러들
+    window.addEventListener('wheel', wheelEvent2);
+
+    document.addEventListener('wheel', wheelEvent3);
+
+    function wheelEvent1(e) {
+      console.log('✅ 내 로직 (가장 먼저 실행됨)');
+    }
+        function wheelEvent2(e) {
+      console.log('🔁 다른 핸들러 1');
+    }
+        function wheelEvent3(e) {
+      console.log('🔁 다른 핸들러 3');
+    }
+
+    function scorllEvent(e){
+      console.log('SCROLL!!');
+    }
+
+    
+    function stopEvent(e){
+        //console.log('maxScroll: ', maxScroll);
+        //console.log('window.scrollY: ', window.scrollY);
+      //if (window.scrollY > maxScroll) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+      // window.scrollTo(0, maxScroll); // 스크롤을 강제로 고정
+      //if (!dontMoveScroll) {
+      //    dontMoveScroll = true
+            window.scrollTo({
+            top: maxScroll,
+            left: 0,
+           behavior: 'auto' // 선택 사항
+          });
+      //}
+        //window.removeEventListener('wheel')
+        //} else {
+        //    window.addEventListener('wheel', (event) => {
+         //       stopEvent(event);
+          //  })
+        //}
+    }
+  </script>
+</body>
+</html>
